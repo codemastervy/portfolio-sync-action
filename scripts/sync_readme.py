@@ -6,6 +6,7 @@ Run by .github/workflows/sync-readme.yml. Safe to run manually too:
     python3 scripts/sync_readme.py
 """
 import json
+import os
 import re
 import urllib.request
 from pathlib import Path
@@ -16,9 +17,16 @@ README_FILE = Path(__file__).resolve().parent.parent / "README.md"
 
 
 def fetch_repos():
+    headers = {"Accept": "application/vnd.github+json", "User-Agent": USERNAME}
+    # Authenticated requests get a 5,000/hour rate limit tied to this repo's
+    # token instead of the 60/hour limit shared by every unauthenticated
+    # caller on GitHub's runner IPs.
+    token = os.environ.get("GITHUB_TOKEN")
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
     req = urllib.request.Request(
         f"https://api.github.com/users/{USERNAME}/repos?per_page=100&sort=created",
-        headers={"Accept": "application/vnd.github+json", "User-Agent": USERNAME},
+        headers=headers,
     )
     with urllib.request.urlopen(req, timeout=30) as resp:
         return json.load(resp)

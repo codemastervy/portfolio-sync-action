@@ -88,7 +88,12 @@ SKIP_REPOS = {"your-username", "your-username.github.io"}  # repos to never add 
 
 No secrets to configure — each workflow uses that repo's own built-in
 `GITHUB_TOKEN` (declared with `permissions: contents: write` in the
-workflow file) to commit back to itself. It never needs to reach into a
+workflow file) both to commit back to itself and to make an authenticated
+call to the GitHub API. That second part matters: an unauthenticated call
+shares a 60-requests-per-hour limit across every job running on GitHub's
+runner IPs worldwide, which is easy to exhaust during testing. Passing the
+token gets each script its own 5,000-per-hour limit instead. It never needs
+to reach into a
 different repo, so there's no cross-repo token to manage.
 
 ---
