@@ -62,10 +62,16 @@ cp scripts/sync_projects.py     <target-repo>/scripts/       # for an HTML portf
 # or
 cp scripts/sync_readme.py       <target-repo>/scripts/       # for a profile README
 
-cp .github/workflows/sync-projects.yml   <target-repo>/.github/workflows/
+cp examples/sync-projects.yml   <target-repo>/.github/workflows/sync-projects.yml
 # or
-cp .github/workflows/sync-readme.yml     <target-repo>/.github/workflows/
+cp examples/sync-readme.yml     <target-repo>/.github/workflows/sync-readme.yml
 ```
+
+The workflow files live under `examples/`, not `.github/workflows/`, on purpose —
+this repo has no `projects.html` or profile README table of its own to sync, so a
+live copy sitting in `.github/workflows/` here would just fail on every scheduled
+run and email you about it. They only start actually running once you copy them
+into a repo that has the file they're meant to update.
 
 ### 2. Edit the two constants at the top of the script
 
